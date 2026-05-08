@@ -1,6 +1,25 @@
 import { useState, useEffect, useMemo } from "react";
 import * as XLSX from "xlsx";
 import { db, listen } from "./firebase.js";
+import React from "react";
+class ErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = {error:null}; }
+  static getDerivedStateFromError(e) { return {error:e.message}; }
+  render() {
+    if (this.state.error) return (
+      <div style={{padding:40,fontFamily:"sans-serif",color:"#C62828",background:"#FFF0F0",minHeight:"100vh"}}>
+        <h2>Something went wrong</h2>
+        <p style={{fontFamily:"monospace",background:"#fff",padding:16,borderRadius:8}}>{this.state.error}</p>
+        <button onClick={()=>window.location.reload()} style={{padding:"10px 20px",background:"#6B2D9A",color:"#fff",border:"none",borderRadius:8,cursor:"pointer",fontSize:14}}>
+          Reload App
+        </button>
+      </div>
+    );
+    return this.props.children;
+  }
+}
+
+
 
 const C = {
   bg:"#F7EEF7", sidebar:"#2D0A52", sidebarHov:"#3D1468", sidebarAct:"#4A1A7A",
@@ -269,6 +288,7 @@ export default function App() {
   );
 
   return (
+    <ErrorBoundary>
     <div style={{fontFamily:HF,display:"flex",height:"100vh",overflow:"hidden",background:C.bg,color:C.text}}>
       <Sidebar
         page={page} setPage={setPage}
@@ -311,6 +331,7 @@ export default function App() {
         />
       )}
     </div>
+    </ErrorBoundary>
   );
 }
 
