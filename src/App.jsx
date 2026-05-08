@@ -326,7 +326,7 @@ export default function App() {
           page={page}
           setPage={(p)=>{ setPage(p); setSidebarOpen(false); }}
           adminMode={adminMode}
-          onLogoClick={()=>setShowPwdModal(true)}
+          onLogoClick={()=>{ setShowPwdModal(true); setSidebarOpen(false); }}
           onLock={()=>{ setAdminMode(false); setPage("record"); setSidebarOpen(false); }}
         />
       </div>
