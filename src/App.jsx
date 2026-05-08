@@ -436,8 +436,8 @@ function TabPasswordModal({title, subtitle, targetPage, savedPwd, onUnlock, onCa
   };
 
   return (
-    <div style={{position:"fixed",inset:0,background:"rgba(45,10,82,0.6)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:500}}>
-      <div style={{background:C.card,borderRadius:20,padding:"32px 36px",width:360,boxShadow:"0 20px 60px rgba(45,10,82,0.3)",border:`1px solid ${C.border}`,textAlign:"center"}}>
+    <div style={{position:"fixed",inset:0,background:"rgba(45,10,82,0.6)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:500,padding:"20px"}}>
+      <div style={{background:C.card,borderRadius:20,padding:"32px 28px",width:"100%",maxWidth:360,boxShadow:"0 20px 60px rgba(45,10,82,0.3)",border:`1px solid ${C.border}`,textAlign:"center",boxSizing:"border-box"}}>
         <div style={{fontSize:28,marginBottom:12}}>🔒</div>
         <div style={{fontFamily:HH,fontSize:18,fontWeight:700,color:C.text,marginBottom:6}}>
           {title || `Opening ${pageLabels[targetPage]||targetPage}`}
