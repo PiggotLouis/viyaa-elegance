@@ -785,6 +785,7 @@ function Dashboard({txns,prods,doExcel,doCSV,doPrint}) {
   const totalExp    = filtExpenses.reduce((s,t)=>s+t.total,0);
   const totalProfit = totalRev-totalInvest-totalExp;
 
+  const hasFilter  = dateFrom||dateTo||selCat!=="all"||selPrice!=="all";
   const lbl = {fontSize:11,fontWeight:600,color:C.muted,letterSpacing:0.5,display:"block",marginBottom:5,textTransform:"uppercase"};
   const dlItems = [
     {icon:"📊",label:"Full Excel Report",  fn:doExcel},
