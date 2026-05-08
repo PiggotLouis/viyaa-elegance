@@ -888,7 +888,7 @@ function Dashboard({txns,prods,doExcel,doCSV,doPrint}) {
           </div>
           <div style={{flex:"1 1 150px",minWidth:"150px"}}>
             <span style={{fontSize:"12px",fontWeight:"700",color:C.primary,textTransform:"uppercase",letterSpacing:"0.5px",display:"block",marginBottom:"6px"}}>Actual Price</span>
-            <div style={{...IST,background:"#F5F0FA",color:matchedProd?C.primary:C.muted,fontWeight:matchedProd?700:400,minHeight:"38px",display:"flex",alignItems:"center"}}>
+            <div style={{...IST,background:"#F5F0FA",color:matchedProd?C.primary:C.muted,fontWeight:matchedProd?700:400,display:"flex",alignItems:"center"}}>
               {matchedProd?cur(matchedProd.actual):"—"}
             </div>
           </div>
@@ -1678,7 +1678,7 @@ const FilterField = ({label, children}) => (
 );
 
 /* ── Atoms ─────────────────────────────────────────────────────── */
-const IST={padding:"9px 12px",borderRadius:8,border:`1px solid ${C.border}`,fontSize:13,background:"#FBF7FD",color:C.text,outline:"none",width:"100%",fontFamily:HF};
+const IST={padding:"9px 12px",borderRadius:8,border:`1px solid ${C.border}`,fontSize:13,background:"#FBF7FD",color:C.text,outline:"none",width:"100%",fontFamily:HF,height:"38px",boxSizing:"border-box"};
 const MTitle=({children})=><div style={{fontFamily:HH,fontSize:20,fontWeight:700,color:C.text,marginBottom:20,paddingBottom:14,borderBottom:`2px solid ${C.gold}50`}}>{children}</div>;
 const FR=({label,children})=><div style={{marginBottom:14}}><label style={{fontSize:11,fontWeight:600,color:C.muted,letterSpacing:0.5,display:"block",marginBottom:5,textTransform:"uppercase"}}>{label}</label>{children}</div>;
 const FI=({v,onChange,ph,type="text"})=><input value={v} onChange={onChange} placeholder={ph} type={type} style={IST}/>;
