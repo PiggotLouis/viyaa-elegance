@@ -825,44 +825,37 @@ function Dashboard({txns,prods,doExcel,doCSV,doPrint}) {
         </div>
       </div>
 
-      {/* Filter Bar — 2 rows */}
-      <div style={{background:C.card,borderRadius:14,padding:"16px 18px",border:`1px solid ${C.border}`,marginBottom:16}}>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14,marginBottom:12}}>
-          <div>
-            <label style={lbl}>Date From</label>
+      {/* Filters */}
+      <div style={{background:C.card,borderRadius:14,padding:"20px",border:`1px solid ${C.border}`,marginBottom:16}}>
+        <div style={{display:"flex",flexWrap:"wrap",gap:16}}>
+          <FilterField label="Date From">
             <input type="date" value={dateFrom} onChange={e=>setDateFrom(e.target.value)} style={IST}/>
-          </div>
-          <div>
-            <label style={lbl}>Date To</label>
+          </FilterField>
+          <FilterField label="Date To">
             <input type="date" value={dateTo} onChange={e=>setDateTo(e.target.value)} style={IST}/>
-          </div>
-          <div>
-            <label style={lbl}>Category</label>
+          </FilterField>
+          <FilterField label="Category">
             <select value={selCat} onChange={e=>{setSelCat(e.target.value);setSelPrice("all");}} style={IST}>
               <option value="all">All Categories</option>
               {availCats.map(c=><option key={c} value={c}>{c}</option>)}
             </select>
-          </div>
-        </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
-          <div>
-            <label style={lbl}>Customer Price</label>
+          </FilterField>
+          <FilterField label="Customer Price">
             <select value={selPrice} onChange={e=>setSelPrice(e.target.value)} style={IST}>
               <option value="all">All Prices</option>
               {availPrices.map(p=><option key={p.id} value={p.customer}>{cur(p.customer)}</option>)}
             </select>
-          </div>
-          <div>
-            <label style={lbl}>Actual Price (auto)</label>
-            <div style={{...IST,background:"#F5F0FA",color:matchedProd?C.primary:C.muted,fontWeight:matchedProd?700:400,display:"flex",alignItems:"center",minHeight:38}}>
-              {matchedProd?cur(matchedProd.actual):"Select category + price above"}
+          </FilterField>
+          <FilterField label="Actual Price">
+            <div style={{...IST,background:"#F5F0FA",color:matchedProd?C.primary:C.muted,fontWeight:matchedProd?700:400,minHeight:38,display:"flex",alignItems:"center"}}>
+              {matchedProd?cur(matchedProd.actual):"—"}
             </div>
-          </div>
+          </FilterField>
         </div>
         {hasFilter&&(
           <button onClick={()=>{setDateFrom("");setDateTo("");setSelCat("all");setSelPrice("all");}}
-            style={{marginTop:10,fontSize:12,color:C.primary,background:"none",border:"none",cursor:"pointer",fontFamily:HF,fontWeight:600}}>
-            ✕ Clear all filters
+            style={{marginTop:12,fontSize:12,color:C.primary,background:"none",border:"none",cursor:"pointer",fontFamily:HF,fontWeight:600}}>
+            ✕ Clear filters
           </button>
         )}
       </div>
@@ -1093,27 +1086,24 @@ function Transactions({txns,allTxns,txF,setTxF,setModal,editTxn,deleteTxn}) {
       </div>
 
       {/* Filters */}
-      <div style={{background:C.card,borderRadius:12,padding:"16px 18px",border:`1px solid ${C.border}`,marginBottom:14}}>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:16}}>
-          <div>
-            <label style={lbl}>Date From</label>
+      <div style={{background:C.card,borderRadius:12,padding:"20px",border:`1px solid ${C.border}`,marginBottom:14}}>
+        <div style={{display:"flex",flexWrap:"wrap",gap:16}}>
+          <FilterField label="Date From">
             <input type="date" value={dateFrom} onChange={e=>setDateFrom(e.target.value)} style={IST}/>
-          </div>
-          <div>
-            <label style={lbl}>Date To</label>
+          </FilterField>
+          <FilterField label="Date To">
             <input type="date" value={dateTo} onChange={e=>setDateTo(e.target.value)} style={IST}/>
-          </div>
-          <div>
-            <label style={lbl}>Category</label>
+          </FilterField>
+          <FilterField label="Category">
             <select value={selCat} onChange={e=>setSelCat(e.target.value)} style={IST}>
               <option value="all">All Categories</option>
               {allCats.map(c=><option key={c} value={c}>{c}</option>)}
             </select>
-          </div>
+          </FilterField>
         </div>
         {hasFilter&&(
           <button onClick={()=>{setDateFrom("");setDateTo("");setSelCat("all");}}
-            style={{marginTop:10,fontSize:12,color:C.primary,background:"none",border:"none",cursor:"pointer",fontFamily:HF,fontWeight:600}}>
+            style={{marginTop:12,fontSize:12,color:C.primary,background:"none",border:"none",cursor:"pointer",fontFamily:HF,fontWeight:600}}>
             ✕ Clear filters
           </button>
         )}
@@ -1634,6 +1624,14 @@ function ExpenseForm({onSave,onClose}) {
     </div>
   );
 }
+
+/* ── FilterField ───────────────────────────────────────────────── */
+const FilterField = ({label, children}) => (
+  <div style={{display:"flex",flexDirection:"column",gap:6,minWidth:160,flex:"1 1 160px"}}>
+    <label style={{fontSize:12,fontWeight:600,color:C.primary,letterSpacing:0.5,textTransform:"uppercase"}}>{label}</label>
+    {children}
+  </div>
+);
 
 /* ── Atoms ─────────────────────────────────────────────────────── */
 const IST={padding:"9px 12px",borderRadius:8,border:`1px solid ${C.border}`,fontSize:13,background:"#FBF7FD",color:C.text,outline:"none",width:"100%",fontFamily:HF};
