@@ -827,34 +827,39 @@ function Dashboard({txns,prods,doExcel,doCSV,doPrint}) {
 
       {/* Filters */}
       <div style={{background:C.card,borderRadius:14,padding:"20px",border:`1px solid ${C.border}`,marginBottom:16}}>
-        <div style={{display:"flex",flexWrap:"wrap",gap:16}}>
-          <FilterField label="Date From">
+        <div style={{display:"flex",flexWrap:"wrap",gap:"16px"}}>
+          <div style={{flex:"1 1 150px",minWidth:"150px"}}>
+            <span style={{fontSize:"12px",fontWeight:"700",color:C.primary,textTransform:"uppercase",letterSpacing:"0.5px",display:"block",marginBottom:"6px"}}>Date From</span>
             <input type="date" value={dateFrom} onChange={e=>setDateFrom(e.target.value)} style={IST}/>
-          </FilterField>
-          <FilterField label="Date To">
+          </div>
+          <div style={{flex:"1 1 150px",minWidth:"150px"}}>
+            <span style={{fontSize:"12px",fontWeight:"700",color:C.primary,textTransform:"uppercase",letterSpacing:"0.5px",display:"block",marginBottom:"6px"}}>Date To</span>
             <input type="date" value={dateTo} onChange={e=>setDateTo(e.target.value)} style={IST}/>
-          </FilterField>
-          <FilterField label="Category">
+          </div>
+          <div style={{flex:"1 1 150px",minWidth:"150px"}}>
+            <span style={{fontSize:"12px",fontWeight:"700",color:C.primary,textTransform:"uppercase",letterSpacing:"0.5px",display:"block",marginBottom:"6px"}}>Category</span>
             <select value={selCat} onChange={e=>{setSelCat(e.target.value);setSelPrice("all");}} style={IST}>
               <option value="all">All Categories</option>
               {availCats.map(c=><option key={c} value={c}>{c}</option>)}
             </select>
-          </FilterField>
-          <FilterField label="Customer Price">
+          </div>
+          <div style={{flex:"1 1 150px",minWidth:"150px"}}>
+            <span style={{fontSize:"12px",fontWeight:"700",color:C.primary,textTransform:"uppercase",letterSpacing:"0.5px",display:"block",marginBottom:"6px"}}>Customer Price</span>
             <select value={selPrice} onChange={e=>setSelPrice(e.target.value)} style={IST}>
               <option value="all">All Prices</option>
               {availPrices.map(p=><option key={p.id} value={p.customer}>{cur(p.customer)}</option>)}
             </select>
-          </FilterField>
-          <FilterField label="Actual Price">
-            <div style={{...IST,background:"#F5F0FA",color:matchedProd?C.primary:C.muted,fontWeight:matchedProd?700:400,minHeight:38,display:"flex",alignItems:"center"}}>
+          </div>
+          <div style={{flex:"1 1 150px",minWidth:"150px"}}>
+            <span style={{fontSize:"12px",fontWeight:"700",color:C.primary,textTransform:"uppercase",letterSpacing:"0.5px",display:"block",marginBottom:"6px"}}>Actual Price</span>
+            <div style={{...IST,background:"#F5F0FA",color:matchedProd?C.primary:C.muted,fontWeight:matchedProd?700:400,minHeight:"38px",display:"flex",alignItems:"center"}}>
               {matchedProd?cur(matchedProd.actual):"—"}
             </div>
-          </FilterField>
+          </div>
         </div>
         {hasFilter&&(
           <button onClick={()=>{setDateFrom("");setDateTo("");setSelCat("all");setSelPrice("all");}}
-            style={{marginTop:12,fontSize:12,color:C.primary,background:"none",border:"none",cursor:"pointer",fontFamily:HF,fontWeight:600}}>
+            style={{marginTop:"12px",fontSize:"12px",color:C.primary,background:"none",border:"none",cursor:"pointer",fontFamily:HF,fontWeight:600}}>
             ✕ Clear filters
           </button>
         )}
@@ -1087,23 +1092,26 @@ function Transactions({txns,allTxns,txF,setTxF,setModal,editTxn,deleteTxn}) {
 
       {/* Filters */}
       <div style={{background:C.card,borderRadius:12,padding:"20px",border:`1px solid ${C.border}`,marginBottom:14}}>
-        <div style={{display:"flex",flexWrap:"wrap",gap:16}}>
-          <FilterField label="Date From">
+        <div style={{display:"flex",flexWrap:"wrap",gap:"16px",alignItems:"flex-end"}}>
+          <div style={{flex:"1 1 150px",minWidth:"150px"}}>
+            <span style={{fontSize:"12px",fontWeight:"700",color:C.primary,textTransform:"uppercase",letterSpacing:"0.5px",display:"block",marginBottom:"6px"}}>Date From</span>
             <input type="date" value={dateFrom} onChange={e=>setDateFrom(e.target.value)} style={IST}/>
-          </FilterField>
-          <FilterField label="Date To">
+          </div>
+          <div style={{flex:"1 1 150px",minWidth:"150px"}}>
+            <span style={{fontSize:"12px",fontWeight:"700",color:C.primary,textTransform:"uppercase",letterSpacing:"0.5px",display:"block",marginBottom:"6px"}}>Date To</span>
             <input type="date" value={dateTo} onChange={e=>setDateTo(e.target.value)} style={IST}/>
-          </FilterField>
-          <FilterField label="Category">
+          </div>
+          <div style={{flex:"1 1 150px",minWidth:"150px"}}>
+            <span style={{fontSize:"12px",fontWeight:"700",color:C.primary,textTransform:"uppercase",letterSpacing:"0.5px",display:"block",marginBottom:"6px"}}>Category</span>
             <select value={selCat} onChange={e=>setSelCat(e.target.value)} style={IST}>
               <option value="all">All Categories</option>
               {allCats.map(c=><option key={c} value={c}>{c}</option>)}
             </select>
-          </FilterField>
+          </div>
         </div>
         {hasFilter&&(
           <button onClick={()=>{setDateFrom("");setDateTo("");setSelCat("all");}}
-            style={{marginTop:12,fontSize:12,color:C.primary,background:"none",border:"none",cursor:"pointer",fontFamily:HF,fontWeight:600}}>
+            style={{marginTop:"12px",fontSize:"12px",color:C.primary,background:"none",border:"none",cursor:"pointer",fontFamily:HF,fontWeight:600}}>
             ✕ Clear filters
           </button>
         )}
