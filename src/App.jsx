@@ -803,36 +803,44 @@ function Dashboard({txns,prods,doExcel,doCSV,doPrint}) {
         </div>
       </div>
 
-      {/* Filter Bar — 5 fields */}
+      {/* Filter Bar — 2 rows */}
       <div style={{background:C.card,borderRadius:14,padding:"16px 18px",border:`1px solid ${C.border}`,marginBottom:16}}>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:12}}>
-          <div><label style={lbl}>Date From</label><input type="date" value={dateFrom} onChange={e=>setDateFrom(e.target.value)} style={IST}/></div>
-          <div><label style={lbl}>Date To</label>  <input type="date" value={dateTo}   onChange={e=>setDateTo(e.target.value)}   style={IST}/></div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14,marginBottom:12}}>
+          <div>
+            <label style={lbl}>Date From</label>
+            <input type="date" value={dateFrom} onChange={e=>setDateFrom(e.target.value)} style={IST}/>
+          </div>
+          <div>
+            <label style={lbl}>Date To</label>
+            <input type="date" value={dateTo} onChange={e=>setDateTo(e.target.value)} style={IST}/>
+          </div>
           <div>
             <label style={lbl}>Category</label>
             <select value={selCat} onChange={e=>{setSelCat(e.target.value);setSelPrice("all");}} style={IST}>
-              <option value="all">All</option>
+              <option value="all">All Categories</option>
               {availCats.map(c=><option key={c} value={c}>{c}</option>)}
             </select>
           </div>
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
           <div>
             <label style={lbl}>Customer Price</label>
             <select value={selPrice} onChange={e=>setSelPrice(e.target.value)} style={IST}>
-              <option value="all">All</option>
+              <option value="all">All Prices</option>
               {availPrices.map(p=><option key={p.id} value={p.customer}>{cur(p.customer)}</option>)}
             </select>
           </div>
           <div>
-            <label style={lbl}>Actual Price</label>
-            <div style={{...IST,background:"#F5F0FA",color:matchedProd?C.primary:C.muted,fontWeight:matchedProd?700:400,display:"flex",alignItems:"center"}}>
-              {matchedProd?cur(matchedProd.actual):"—"}
+            <label style={lbl}>Actual Price (auto)</label>
+            <div style={{...IST,background:"#F5F0FA",color:matchedProd?C.primary:C.muted,fontWeight:matchedProd?700:400,display:"flex",alignItems:"center",minHeight:38}}>
+              {matchedProd?cur(matchedProd.actual):"Select category + price above"}
             </div>
           </div>
         </div>
-        {(dateFrom||dateTo||selCat!=="all"||selPrice!=="all")&&(
+        {hasFilter&&(
           <button onClick={()=>{setDateFrom("");setDateTo("");setSelCat("all");setSelPrice("all");}}
             style={{marginTop:10,fontSize:12,color:C.primary,background:"none",border:"none",cursor:"pointer",fontFamily:HF,fontWeight:600}}>
-            ✕ Clear filters
+            ✕ Clear all filters
           </button>
         )}
       </div>
@@ -1063,10 +1071,16 @@ function Transactions({txns,allTxns,txF,setTxF,setModal,editTxn,deleteTxn}) {
       </div>
 
       {/* Filters */}
-      <div style={{background:C.card,borderRadius:12,padding:"14px 18px",border:`1px solid ${C.border}`,marginBottom:14}}>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12}}>
-          <div><label style={lbl}>Date From</label><input type="date" value={dateFrom} onChange={e=>setDateFrom(e.target.value)} style={IST}/></div>
-          <div><label style={lbl}>Date To</label>  <input type="date" value={dateTo}   onChange={e=>setDateTo(e.target.value)}   style={IST}/></div>
+      <div style={{background:C.card,borderRadius:12,padding:"16px 18px",border:`1px solid ${C.border}`,marginBottom:14}}>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:16}}>
+          <div>
+            <label style={lbl}>Date From</label>
+            <input type="date" value={dateFrom} onChange={e=>setDateFrom(e.target.value)} style={IST}/>
+          </div>
+          <div>
+            <label style={lbl}>Date To</label>
+            <input type="date" value={dateTo} onChange={e=>setDateTo(e.target.value)} style={IST}/>
+          </div>
           <div>
             <label style={lbl}>Category</label>
             <select value={selCat} onChange={e=>setSelCat(e.target.value)} style={IST}>
@@ -1077,7 +1091,7 @@ function Transactions({txns,allTxns,txF,setTxF,setModal,editTxn,deleteTxn}) {
         </div>
         {hasFilter&&(
           <button onClick={()=>{setDateFrom("");setDateTo("");setSelCat("all");}}
-            style={{marginTop:8,fontSize:12,color:C.primary,background:"none",border:"none",cursor:"pointer",fontFamily:HF,fontWeight:600}}>
+            style={{marginTop:10,fontSize:12,color:C.primary,background:"none",border:"none",cursor:"pointer",fontFamily:HF,fontWeight:600}}>
             ✕ Clear filters
           </button>
         )}
@@ -1524,42 +1538,55 @@ function DeleteTxnModal({txn,onConfirm,onClose}) {
 }
 
 function ChangePassword({savedPwd,setSavedPwd}) {
+  const isFirstTime = !savedPwd;
   const [cur2,  setCur2]  = useState("");
   const [newP,  setNewP]  = useState("");
   const [newP2, setNewP2] = useState("");
-  const [msg,   setMsg]   = useState(null); // {type:'ok'|'err', text}
+  const [msg,   setMsg]   = useState(null);
   const [show,  setShow]  = useState(false);
 
   const submit = () => {
-    if (cur2 !== savedPwd)      { setMsg({type:"err",text:"Current password is incorrect."});return; }
-    if (newP.length < 4)        { setMsg({type:"err",text:"New password must be at least 4 characters."});return; }
-    if (newP !== newP2)         { setMsg({type:"err",text:"New passwords do not match."});return; }
+    if (!isFirstTime && cur2 !== savedPwd) { setMsg({type:"err",text:"Current password is incorrect."});return; }
+    if (newP.length < 4)  { setMsg({type:"err",text:"Password must be at least 4 characters."});return; }
+    if (newP !== newP2)   { setMsg({type:"err",text:"Passwords do not match."});return; }
     setSavedPwd(newP);
     setCur2(""); setNewP(""); setNewP2("");
-    setMsg({type:"ok",text:"Password changed successfully!"});
+    setMsg({type:"ok",text:isFirstTime?"Password set successfully! ✓":"Password changed successfully! ✓"});
   };
 
   return (
-    <Panel title="Change Password">
-      <FR label="Current Password">
+    <Panel title={isFirstTime?"Set Your Password":"Change Password"}>
+      {isFirstTime&&(
+        <div style={{background:C.goldLt,border:`1px solid ${C.gold}40`,borderRadius:8,padding:"10px 14px",marginBottom:14,fontSize:13,color:C.text}}>
+          No password set yet. Set one below to protect your store.
+        </div>
+      )}
+      {!isFirstTime&&(
+        <FR label="Current Password">
+          <div style={{position:"relative"}}>
+            <input type={show?"text":"password"} value={cur2} onChange={e=>{setCur2(e.target.value);setMsg(null);}}
+              placeholder="Enter current password" style={{...IST,paddingRight:40}}/>
+            <button onClick={()=>setShow(s=>!s)} style={{position:"absolute",right:10,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",cursor:"pointer",fontSize:14,color:C.muted}}>
+              {show?"🙈":"👁"}
+            </button>
+          </div>
+        </FR>
+      )}
+      <FR label="New Password">
         <div style={{position:"relative"}}>
-          <input type={show?"text":"password"} value={cur2} onChange={e=>{setCur2(e.target.value);setMsg(null);}}
-            placeholder="Enter current password" style={{...IST,paddingRight:40}}/>
+          <input type={show?"text":"password"} value={newP} onChange={e=>{setNewP(e.target.value);setMsg(null);}}
+            placeholder="At least 4 characters" style={{...IST,paddingRight:40}}/>
           <button onClick={()=>setShow(s=>!s)} style={{position:"absolute",right:10,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",cursor:"pointer",fontSize:14,color:C.muted}}>
             {show?"🙈":"👁"}
           </button>
         </div>
       </FR>
-      <FR label="New Password">
-        <input type={show?"text":"password"} value={newP} onChange={e=>{setNewP(e.target.value);setMsg(null);}}
-          placeholder="At least 4 characters" style={IST}/>
-      </FR>
-      <FR label="Confirm New Password">
+      <FR label="Confirm Password">
         <input type={show?"text":"password"} value={newP2} onChange={e=>{setNewP2(e.target.value);setMsg(null);}}
-          placeholder="Repeat new password" style={IST}/>
+          placeholder="Repeat password" style={IST}/>
       </FR>
-      {msg&&<div style={{fontSize:12,color:msg.type==="ok"?C.success:C.danger,marginBottom:10}}>{msg.text}</div>}
-      <Btn onClick={submit}>Change Password</Btn>
+      {msg&&<div style={{fontSize:13,color:msg.type==="ok"?C.success:C.danger,marginBottom:10,fontWeight:500}}>{msg.text}</div>}
+      <Btn onClick={submit} full>{isFirstTime?"Set Password":"Change Password"}</Btn>
     </Panel>
   );
 }
