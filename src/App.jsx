@@ -1,7 +1,16 @@
 import { useState, useEffect, useMemo } from "react";
 import * as XLSX from "xlsx";
-import { db, listen } from "./firebase.js";
 import React from "react";
+
+// Simple localStorage db — works perfectly offline
+const db = {
+  get: async (k,fb) => { try { const r=localStorage.getItem(k); return r?JSON.parse(r):fb; } catch{return fb;} },
+  set: async (k,v)  => { try { localStorage.setItem(k,JSON.stringify(v)); } catch{} }
+};
+const listen = (k, fb, callback) => {
+  db.get(k, fb).then(callback);
+  return () => {};
+};
 class ErrorBoundary extends React.Component {
   constructor(props) { super(props); this.state = {error:null}; }
   static getDerivedStateFromError(e) { return {error:e.message}; }
@@ -59,7 +68,7 @@ const genSerial = (category, actualPrice, existingProds, excludeId=null) => {
   return dupes.length === 0 ? base : `${base}-${dupes.length + 1}`;
 };
 
-// db is imported from ./firebase.js
+
 
 export default function App() {
   const [page,         setPage]        = useState("record");
@@ -71,6 +80,7 @@ export default function App() {
   const [search,       setSearch]      = useState("");
   const [txF,          setTxF]         = useState("all");
   const [adminMode,    setAdminMode]   = useState(false);
+  const [sidebarOpen,  setSidebarOpen] = useState(false);
   const [savedPwd,     setSavedPwd]    = useState(null);
   const [showPwdModal, setShowPwdModal]= useState(false);
 
@@ -289,14 +299,40 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-    <div style={{fontFamily:HF,display:"flex",height:"100vh",overflow:"hidden",background:C.bg,color:C.text}}>
-      <Sidebar
-        page={page} setPage={setPage}
-        adminMode={adminMode}
-        onLogoClick={()=>setShowPwdModal(true)}
-        onLock={()=>{ setAdminMode(false); setPage("record"); }}
-      />
-      <div style={{flex:1,overflow:"auto"}}>
+    <div style={{fontFamily:HF,height:"100vh",overflow:"hidden",background:C.bg,color:C.text,position:"relative"}}>
+
+      {/* Overlay — tap outside to close sidebar */}
+      {sidebarOpen&&(
+        <div onClick={()=>setSidebarOpen(false)}
+          style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.35)",zIndex:140}}/>
+      )}
+
+      {/* Toggle button — always visible on left edge */}
+      <button onClick={()=>setSidebarOpen(s=>!s)}
+        className="no-print"
+        style={{position:"fixed",left:sidebarOpen?236:0,top:"50%",transform:"translateY(-50%)",
+          width:22,height:52,background:C.primary,border:"none",
+          borderRadius:"0 10px 10px 0",cursor:"pointer",zIndex:160,
+          color:"#fff",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center",
+          transition:"left 0.3s cubic-bezier(0.4,0,0.2,1)",boxShadow:"2px 0 8px rgba(45,10,82,0.2)"}}>
+        {sidebarOpen?"◀":"▶"}
+      </button>
+
+      {/* Sliding Sidebar */}
+      <div style={{position:"fixed",left:0,top:0,bottom:0,zIndex:150,
+        transform:sidebarOpen?"translateX(0)":"translateX(-100%)",
+        transition:"transform 0.3s cubic-bezier(0.4,0,0.2,1)"}}>
+        <Sidebar
+          page={page}
+          setPage={(p)=>{ setPage(p); setSidebarOpen(false); }}
+          adminMode={adminMode}
+          onLogoClick={()=>setShowPwdModal(true)}
+          onLock={()=>{ setAdminMode(false); setPage("record"); setSidebarOpen(false); }}
+        />
+      </div>
+
+      {/* Main content — full width always */}
+      <div style={{height:"100vh",overflow:"auto"}}>
         {page==="record"       && <RecordSale   prods={prods} onSale={recordSale}/>}
         {page==="salesstats"   && <SalesStats   txns={txns}/>}
         {page==="dashboard"    && <Dashboard    txns={txns} prods={prods} doExcel={doExcel} doCSV={doCSV} doPrint={()=>window.print()}/>}
@@ -350,7 +386,7 @@ function Sidebar({page,setPage,adminMode,onLogoClick,onLock}) {
   const navs = adminMode ? adminNavs : publicNavs;
 
   return (
-    <div className="no-print" style={{width:236,background:C.sidebar,display:"flex",flexDirection:"column",flexShrink:0}}>
+    <div className="no-print" style={{width:236,height:"100%",background:C.sidebar,display:"flex",flexDirection:"column",flexShrink:0}}>
       {/* VE Logo — clicks to enter or exit admin */}
       <div style={{padding:"26px 20px 20px",borderBottom:"1px solid rgba(255,255,255,0.08)",textAlign:"center"}}>
         <div onClick={adminMode ? onLock : onLogoClick}
