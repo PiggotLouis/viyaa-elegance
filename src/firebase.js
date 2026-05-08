@@ -5,7 +5,7 @@
 const firebaseConfig = {
 apiKey: "AIzaSyBDt-H25d2I1fu9S9AyhpA97cBIBFhtJtk",
 authDomain: "viyaa-elegance.firebaseapp.com",
-databaseURL: "https://viyaa-elegance-default-rtdb.asia-southeast1.firebasedat...",
+databaseURL: "https://viyaa-elegance-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId: "viyaa-elegance",
 storageBucket: "viyaa-elegance.firebasestorage.app",
 messagingSenderId: "14046391722",
